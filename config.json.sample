@@ -1,0 +1,8 @@
+{
+   "title": "Trove Search",
+   "subtitle": "Alma Cloud App to search Trove for material",
+   "author": "Cathryn Co, Kevin Lin, Nishen Naidoo, Debbie Storz, Yuan Zhong",
+   "env": "https://ap01-psb.alma.exlibrisgroup.com/institution/[add your institution code here]",
+   "port": 4200,
+   "name": "trove-search"
+}
