@@ -2,5 +2,10 @@
    "id": "trove-search",
    "title": "Trove Search",
    "subtitle": "Alma Cloud App to search Trove for material",
-   "author": "Cathryn Co, Kevin Lin, Nishen Naidoo, Debbie Storz, Yuan Zhong"
+   "author": "Cathryn Co, Kevin Lin, Nishen Naidoo, Debbie Storz, Yuan Zhong",
+   "contentSecurity": {
+      "connectSrc": [
+         "https://api.trove.nla.gov.au/"
+      ]
+   }
 }
