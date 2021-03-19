@@ -1,11 +1,9 @@
 import { forkJoin, Subscription, of } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   CloudAppRestService, CloudAppEventsService, AlertService, PageInfo, EntityType
 } from '@exlibris/exl-cloudapp-angular-lib';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatRadioChange } from '@angular/material/radio';
 import { TroveService } from '../trove.service';
 
 @Component({
@@ -54,15 +52,19 @@ export class MainComponent implements OnInit, OnDestroy {
     if (!valid) return;
 
     this.loading = true;
-    let almaRequests = [];
-    pageInfo.entities.forEach(e => almaRequests.push(this.restService.call<any>(e.link)));
-    forkJoin(almaRequests)
-      .subscribe(f => {
-        this.enrichedEntities = f;
-        console.log("enrichedEntities", this.enrichedEntities);
 
+    this.restService.call<any>(`/bibs?mms_id=${pageInfo.entities.map(e => e.id).join(',')}&view=brief`)
+      .pipe(
+        map(result => {
+          let items = {};
+          result.bib.forEach(x => Object.assign(items, { [x["mms_id"]]: x }))
+          return items;
+        })
+      ).subscribe(r => {
+        this.enrichedEntities = pageInfo.entities.map(e => r[e.id]);
+        console.log("enrichedEntities:", this.enrichedEntities);
         let troveRequests = [];
-        f.forEach(entity => {
+        this.enrichedEntities.forEach(entity => {
           const identifier = this.extractIdentifier(entity)
           console.debug("identifier:", identifier);
           if (identifier !== null)
@@ -73,17 +75,18 @@ export class MainComponent implements OnInit, OnDestroy {
 
         forkJoin(troveRequests)
           .pipe(
-            finalize(() => this.loading = false),
-            tap(t => console.log(t))
+            finalize(() => this.loading = false)
           ).subscribe(t => {
             this.troveData = t.map(td => this.troveService.createDisplayPackage(td));
-            console.log("trovedata:", this.troveData);
+            console.debug("trovedata:", this.troveData);
           });
       });
   }
 
   //TODO: get a better identifier extraction/cleanup.
   extractIdentifier(entity: any) {
+    if (entity == null) return null;
+
     const issn = entity.issn;
     const isbn = entity.isbn;
 
