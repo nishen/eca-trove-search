@@ -2,7 +2,7 @@ import { forkJoin, Subscription, of } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
-  CloudAppRestService, CloudAppEventsService, AlertService, PageInfo
+  CloudAppRestService, CloudAppEventsService, AlertService, PageInfo, EntityType
 } from '@exlibris/exl-cloudapp-angular-lib';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatRadioChange } from '@angular/material/radio';
@@ -39,12 +39,21 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   onPageLoad = (pageInfo: PageInfo) => {
-    console.log("pageLoad");
+    console.log("pageLoad", pageInfo);
 
-    this.loading = true;
     this.troveData = null;
     this.enrichedEntities = null;
 
+    if (pageInfo.entities.length == 0) return;
+
+    let valid = true;
+    pageInfo.entities.forEach(e => {
+      if (e.type !== EntityType.BIB_MMS) valid = false;
+    });
+
+    if (!valid) return;
+
+    this.loading = true;
     let almaRequests = [];
     pageInfo.entities.forEach(e => almaRequests.push(this.restService.call<any>(e.link)));
     forkJoin(almaRequests)
@@ -58,7 +67,7 @@ export class MainComponent implements OnInit, OnDestroy {
           console.debug("identifier:", identifier);
           if (identifier !== null)
             troveRequests.push(this.troveService.searchTroveById(identifier));
-          else 
+          else
             troveRequests.push(of(null));
         });
 

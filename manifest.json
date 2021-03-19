@@ -17,5 +17,6 @@
    "icon": {
       "type": "url",
       "value": "https://assets.nla.gov.au/favicons/trove/og-image-200x200.png"
-   }
+   },
+   "entities": ["BIB_MMS"]
 }
