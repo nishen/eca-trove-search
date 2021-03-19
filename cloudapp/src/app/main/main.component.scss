@@ -58,3 +58,21 @@ textarea {
   font-style: italic;
   color: #dfdfdf
 }
+
+.trove-info-table {
+  font-size: 12px;
+  width: 100%;
+  margin-bottom: 15px;
+  border-collapse: collapse;
+}
+
+.trove-info-label {
+  font-weight: bold;
+  width: 60px;
+  vertical-align: top;
+}
+
+.trove-info-link {
+  vertical-align: top;
+  text-align: right;
+}

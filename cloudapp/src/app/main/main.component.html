@@ -16,30 +16,29 @@
 <ng-template #entities>
   <h1>Trove Results</h1>
   <mat-accordion>
-    <mat-expansion-panel hideToggle *ngFor="let tdp of troveData; let i = index">
+    <mat-expansion-panel *ngFor="let tdp of troveData; let i = index"  [disabled]="tdp?.length == 0">
       <mat-expansion-panel-header >
         <mat-panel-title>{{ i + 1 }}.</mat-panel-title>
         <mat-panel-description *ngIf="tdp?.length > 0">
           <span class="truncate"> {{ tdp[0].title }} </span>
         </mat-panel-description>
         <mat-panel-description *ngIf="tdp?.length == 0">
-          <span class="no-record">No Record in Trove Found</span>
+          <span class="no-record">No Record Found in Trove</span>
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <p>This is the primary content of the panel.</p>
+
+      <table class="trove-info-table" *ngFor="let dp of tdp; let i = index">
+        <tr><td class="trove-info-label">Type:</td><td colspan="5" class="trove-info-data">{{ dp.type.join(", ") }}</td></tr>
+        <tr>
+          <td class="trove-info-label">Holdings:</td><td class="trove-info-data">{{ dp.holdingsCount }}</td>
+          <td class="trove-info-label">Versions:</td><td class="trove-info-data">{{ dp.versionCount }}</td>
+          <td colspan="2" class="trove-info-link"><a target="_blank" href="{{ dp.troveUrl }}">Open in Trove</a></td>
+        </tr>
+      </table>
+
     </mat-expansion-panel>
   </mat-accordion>
 
-  
-  <mat-radio-group
-    aria-labelledby="entities-radio-group-label"
-    class="entities-radio-group"
-    [(ngModel)]="selectedEntity"
-    (change)="entitySelected($event)">
-    <mat-radio-button *ngFor="let entity of entities$ | async" [value]="entity">
-      {{entity.description}}
-    </mat-radio-button>
-  </mat-radio-group>
 </ng-template>
 
 <div class="loading-shade" *ngIf="loading">
