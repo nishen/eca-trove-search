@@ -32,3 +32,29 @@ pre,
 textarea {
   font-size: 0.9em;
 }
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+.mat-expansion-panel-header {
+  padding: 0 12px;
+}
+
+.mat-expansion-panel-header-title {
+  flex-grow: 0;
+  margin-right: 12px;
+  font-size: 14px;
+}
+
+.mat-expansion-panel-header-description {
+  font-size: 14px;
+}
+
+.no-record {
+  font-style: italic;
+  color: #dfdfdf
+}
