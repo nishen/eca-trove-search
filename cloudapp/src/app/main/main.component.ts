@@ -2,7 +2,7 @@ import { forkJoin, Subscription, of } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
-  CloudAppRestService, CloudAppEventsService, AlertService, PageInfo, EntityType
+  CloudAppRestService, CloudAppEventsService, AlertService, PageInfo, EntityType, Entity
 } from '@exlibris/exl-cloudapp-angular-lib';
 import { TroveService } from '../trove.service';
 
@@ -19,7 +19,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   enrichedEntities: any = null;
 
-  troveData: any = null;
+  troveAvailable = false;
 
   constructor(
     private restService: CloudAppRestService,
@@ -39,13 +39,26 @@ export class MainComponent implements OnInit, OnDestroy {
   onPageLoad = (pageInfo: PageInfo) => {
     console.log("pageLoad", pageInfo);
 
-    this.troveData = null;
     this.enrichedEntities = null;
 
-    if (pageInfo.entities.length == 0) return;
+    this.troveService.isAvailable().subscribe(
+      _ => {
+        this.troveAvailable = true;
+        this.enrichEntities(pageInfo.entities);
+      },
+      err => {
+        this.troveAvailable = false;
+        console.log("we're down: ", err)
+      });
+  }
+
+  enrichEntities(entities: Entity[]) {
+    if (entities.length == 0) return;
+
+    this.enrichedEntities = entities;
 
     let valid = true;
-    pageInfo.entities.forEach(e => {
+    entities.forEach(e => {
       if (e.type !== EntityType.BIB_MMS) valid = false;
     });
 
@@ -53,7 +66,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
     this.loading = true;
 
-    this.restService.call<any>(`/bibs?mms_id=${pageInfo.entities.map(e => e.id).join(',')}&view=brief`)
+    this.restService.call<any>(`/bibs?mms_id=${entities.map(e => e.id).join(',')}&view=brief`)
       .pipe(
         map(result => {
           let items = {};
@@ -61,12 +74,11 @@ export class MainComponent implements OnInit, OnDestroy {
           return items;
         })
       ).subscribe(r => {
-        this.enrichedEntities = pageInfo.entities.map(e => r[e.id]);
+        this.enrichedEntities = entities.map(e => Object.assign(e, r[e.id]));
         console.log("enrichedEntities:", this.enrichedEntities);
         let troveRequests = [];
         this.enrichedEntities.forEach(entity => {
           const identifier = this.extractIdentifier(entity)
-          console.debug("identifier:", identifier);
           if (identifier !== null)
             troveRequests.push(this.troveService.searchTroveById(identifier));
           else
@@ -77,8 +89,12 @@ export class MainComponent implements OnInit, OnDestroy {
           .pipe(
             finalize(() => this.loading = false)
           ).subscribe(t => {
-            this.troveData = t.map(td => this.troveService.createDisplayPackage(td));
-            console.debug("trovedata:", this.troveData);
+            const troveData = t.map(td => this.troveService.createDisplayPackage(td));
+            for (let x = 0; x < this.enrichedEntities.length; x++) {
+              this.enrichedEntities[x].troveData = troveData[x];
+              this.enrichedEntities[x].source = entities[x];
+            }
+            console.debug("enrichedEntities:", this.enrichedEntities);
           });
       });
   }
@@ -92,15 +108,13 @@ export class MainComponent implements OnInit, OnDestroy {
 
     let identifier: string = null;
 
-    if (issn !== null) {
+    if (issn != null) {
       identifier = issn;
-      console.debug("issn", identifier);
     } else if (isbn != null) {
       identifier = isbn;
-      console.debug("isbn", identifier);
     }
 
-    if (identifier === null)
+    if (identifier == null)
       return null;
     return identifier.replace(/-/g, '').replace(/[^0-9].+/, '');
   }

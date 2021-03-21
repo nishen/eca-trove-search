@@ -40,39 +40,62 @@ textarea {
   max-width: 300px;
 }
 
+.mat-accordion {
+  font-size: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
 .mat-expansion-panel-header {
   padding: 0 12px;
 }
 
 .mat-expansion-panel-header-title {
   flex-grow: 0;
-  margin-right: 12px;
-  font-size: 14px;
+  margin-right: 8px;
+  font-size: 12px;  
 }
 
 .mat-expansion-panel-header-description {
   font-size: 14px;
 }
 
+div.mat-expansion-panel-body {
+  padding: 0 5px 16px !important;
+}
+
 .no-record {
-  font-style: italic;
-  color: #dfdfdf
+  font-style: normal;
+  color: #dfdfdf;
+  font-weight: lighter;
 }
 
-.trove-info-table {
-  font-size: 12px;
-  width: 100%;
-  margin-bottom: 15px;
-  border-collapse: collapse;
+.card-warning {
+  color: #770000 !important;
 }
 
-.trove-info-label {
-  font-weight: bold;
-  width: 60px;
-  vertical-align: top;
+.mat-card-title {
+  font-size: 14px !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
 }
 
-.trove-info-link {
-  vertical-align: top;
-  text-align: right;
+.mat-card-subtitle {
+  font-size: 13px !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: bolder;
+
+}
+
+.mat-card-content {
+  font-size: 13px !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.mat-stroked-button {
+  min-width: 56px;
+  line-height: 32px;
+  padding: 0 8px;
+  font-size: 11px;
+  text-transform: uppercase;
 }

@@ -1,5 +1,5 @@
 <ng-container 
-  *ngIf="troveData?.length > 0; then entities; else noentities"
+  *ngIf="enrichedEntities?.length > 0; then entities; else noentities"
   ></ng-container>
 
 <ng-template #noentities>
@@ -11,32 +11,47 @@
     <li>view type information about a particular Trove item.</li>
     <li>link out directly to the item on Trove.</li>
   </ul>
+
+  <mat-card *ngIf="!troveAvailable">
+    <mat-card-title class="card-warning">Trove is Unavailable</mat-card-title>
+    <mat-card-content>
+      <p>There seems to be an issue attempting to search Trove.</p>
+      <p>It is possible that:</p>
+      <ol>
+        <li>You have not set a correct API key for Trove.</li>
+        <li>Trove is down for the moment.</li>
+      </ol>
+      <p>You can set or check you API key in <strong><a [routerLink]="['settings']">settings</a></strong>.</p>
+    </mat-card-content>
+  </mat-card>
+
 </ng-template>
 
 <ng-template #entities>
   <h1>Trove Results</h1>
-  <mat-accordion>
-    <mat-expansion-panel *ngFor="let tdp of troveData; let i = index"  [disabled]="tdp?.length == 0">
+  <mat-accordion multi>
+    <mat-expansion-panel *ngFor="let ee of enrichedEntities; let i = index"  [disabled]="ee.troveData?.length == 0">
       <mat-expansion-panel-header >
         <mat-panel-title>{{ i + 1 }}.</mat-panel-title>
-        <mat-panel-description *ngIf="tdp?.length > 0">
-          <span class="truncate"> {{ tdp[0].title }} </span>
-        </mat-panel-description>
-        <mat-panel-description *ngIf="tdp?.length == 0">
-          <span class="no-record">No Record Found in Trove</span>
+        <mat-panel-description>
+          <span class="truncate">[{{ ee.troveData?.length }}] {{ ee.description }}</span>
         </mat-panel-description>
       </mat-expansion-panel-header>
 
-      <table class="trove-info-table" *ngFor="let dp of tdp; let i = index">
-        <tr><td class="trove-info-label">Type:</td><td colspan="5" class="trove-info-data">{{ dp.type.join(", ") }}</td></tr>
-        <tr>
-          <td class="trove-info-label">Holdings:</td><td class="trove-info-data">{{ dp.holdingsCount }}</td>
-          <td class="trove-info-label">Versions:</td><td class="trove-info-data">{{ dp.versionCount }}</td>
-          <td colspan="2" class="trove-info-link"><a target="_blank" href="{{ dp.troveUrl }}">Open in Trove</a></td>
-        </tr>
-      </table>
+      <mat-card *ngFor="let dp of ee.troveData; let i = index">
+        <mat-card-header>
+          <mat-card-title >{{ dp.title }}</mat-card-title>
+          <mat-card-subtitle>{{ dp.type.join(", ") }}</mat-card-subtitle>
+          <mat-card-subtitle>Holdings ({{ dp.holdingsCount }}), Versions ({{ dp.versionCount }})</mat-card-subtitle>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+          <mat-card-actions>
+            <a mat-stroked-button color="primary" target="_blank" href="{{ dp.troveUrl }}">Open in Trove</a>
+          </mat-card-actions>
+      </mat-card>
 
     </mat-expansion-panel>
+
   </mat-accordion>
 
 </ng-template>
