@@ -1,6 +1,7 @@
 {
    "id": "trove-search",
    "title": "Trove Search",
+   "description": "For more information see https://github.com/nishen/eca-trove-search",
    "subtitle": "Alma Cloud App to search Trove for material",
    "author": "Cathryn Co, Kevin Lin, Nishen Naidoo, Debbie Storz, Yuan Zhong",
    "contentSecurity": {
@@ -12,7 +13,8 @@
       }
    },
    "pages": {
-      "settings": "/#/settings"
+      "settings": "/#/settings",
+      "help": "https://github.com/nishen/eca-trove-search"
    },
    "icon": {
       "type": "url",
