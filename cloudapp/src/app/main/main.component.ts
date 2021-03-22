@@ -99,23 +99,14 @@ export class MainComponent implements OnInit, OnDestroy {
       });
   }
 
-  //TODO: get a better identifier extraction/cleanup.
   extractIdentifier(entity: any) {
     if (entity == null) return null;
 
-    const issn = entity.issn;
-    const isbn = entity.isbn;
-
     let identifier: string = null;
 
-    if (issn != null) {
-      identifier = issn;
-    } else if (isbn != null) {
-      identifier = isbn;
-    }
+    if (entity.issn != null) identifier = entity.issn;
+    else if (entity.isbn != null) identifier = entity.isbn;
 
-    if (identifier == null)
-      return null;
-    return identifier.replace(/-/g, '').replace(/[^0-9].+/, '');
+    return (identifier == null) ? identifier : identifier.replace(/-/g, '').replace(/[^0-9].+/, '');
   }
 }
