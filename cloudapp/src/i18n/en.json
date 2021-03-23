@@ -1,0 +1,26 @@
+{ 
+    "Translate": {
+        "Main": {
+            "Title": "Trove Search",
+            "Description": "This app searches Trove for additional information for BIB results shown on the screen."
+        },
+        "Settings": {
+            "Title": "Settings",
+            "Description": "An API key from Trove is required to use this app.",
+            "ContactEmail": "Contact Email Address",
+            "InstitutionalURL": "Institution URL",
+            "SavedSuccessfully": "Settings successfully saved."
+        },
+        "UI": {
+            "Back": "Back",
+            "Save": "Save",
+            "Update": "Update",
+            "Reset": "Reset Form",
+            "Clear": "Clear"
+        },
+        "Errors": {
+            "GenericError": "An error occurred.",
+            "InvalidInstitutionURL": "Institution URL must begin with http:// or https://."
+        }
+    }
+}
