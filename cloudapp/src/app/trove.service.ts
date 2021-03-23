@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CloudAppSettingsService } from '@exlibris/exl-cloudapp-angular-lib';
-import { Observable, of, throwError } from 'rxjs';
+import { Subscription, Observable, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -10,17 +10,21 @@ import { map, catchError } from 'rxjs/operators';
 export class TroveService {
 
   baseUrl = 'https://api.trove.nla.gov.au/v2';
-  apiKey = '';
-  settings = null;
+  apiKey = null;
 
+  public settingsSub: Subscription;
 
   constructor(private settingsService: CloudAppSettingsService, private http: HttpClient) {
+    // get initial value. changes come through the settings subscription.
     this.settingsService.get().subscribe(settings => {
-      this.settings = settings;
-      //this.apiKey = this.settings.apiKey;
+      this.apiKey = settings.troveAPIKey;
     });
   }
 
+  updateSettings(settings: any) {
+    console.log("updated settings:", settings);
+    this.apiKey = settings.troveAPIKey;
+  }
 
   isAvailable(): Observable<boolean> {
     if (this.apiKey == null || this.apiKey == "")

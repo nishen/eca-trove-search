@@ -1,16 +1,64 @@
-<div class="navbar">
+<div class="loading-shade" *ngIf="saving">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+
+<form #troveForm="ngForm">
+  <div class="cloudapp-actions">
+    <button mat-flat-button color="secondary" [routerLink]="['/']">
+      <mat-icon>arrow_back</mat-icon>
+      {{ "Translate.Settings.Back" | translate }}
+    </button>
+    <button mat-flat-button color="secondary" (click)="restore()">
+      {{ "Translate.Settings.Restore" | translate }}
+    </button>
+    <button mat-flat-button color="secondary" (click)="troveForm.resetForm()">
+      {{ "Translate.Settings.Reset" | translate }}
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="save()"
+      [disabled]="!troveForm.dirty"
+    >
+      {{ "Translate.Settings.Save" | translate }}
+    </button>
+  </div>
+
+  <div class="navbar">
     <h1 translate>Translate.Settings.Title</h1>
-<div>
-    <h3>This app requires an API key from Trove to function. If you don't have one, create an account at <a href="https://trove.nla.gov.au/">Trove</a> and follow the instructions to get an API key.</h3>
+  </div>
+
+  <div>
+    <h3>
+      This app requires an API key from Trove to function. If you don't have
+      one, create an account at
+      <a href="https://trove.nla.gov.au/">Trove</a> and follow the instructions
+      to get an API key.
+    </h3>
     <p></p>
-    <h3><a href="https://trove.nla.gov.au/about/create-something/using-api/api-version-2-technical-guide">Trove API Documentation</a></h3>
-    
-    <h3 class="subheading-1">Add your Trove API key:</h3>
-    <mat-form-field appearance="standard">
-        <mat-label>Trove API key</mat-label>
-        <input matInput [(ngModel)]="TroveAPIKey"  [maxLength]="50">
-    </mat-form-field>
-    <div mat-dialog-actions>
-        <button mat-raised-button color="primary" (click)="saveTroveAPIKey()">Save API key</button> &nbsp;
-        <button mat-raised-button color="primary" [routerLink]="'/'">Back</button>
-</div><br>
+    <h3>
+      <a
+        href="https://trove.nla.gov.au/about/create-something/using-api/api-version-2-technical-guide"
+        target="_blank"
+        >Trove API Documentation</a
+      >
+    </h3>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Add your Trove API key</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="standard">
+          <mat-label>Trove API Key</mat-label>
+          <input
+            matInput
+            [(ngModel)]="settings.troveAPIKey"
+            name="troveAPIKey"
+            [maxLength]="50"
+          />
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</form>

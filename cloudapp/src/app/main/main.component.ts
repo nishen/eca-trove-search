@@ -55,18 +55,29 @@ export class MainComponent implements OnInit, OnDestroy {
   enrichEntities(entities: Entity[]) {
     if (entities.length == 0) return;
 
-    this.enrichedEntities = entities;
+    if (!this.troveAvailable) return;
 
     let valid = true;
     entities.forEach(e => {
-      if (e.type !== EntityType.BIB_MMS) valid = false;
+      if ((e.type !== EntityType.BIB_MMS) && (e.type !== EntityType.REQUEST)) valid = false;
     });
 
     if (!valid) return;
 
+
+    this.enrichedEntities = entities.map(e => {
+      let result: any = Object.assign({}, e);
+      if (e.type == EntityType.REQUEST) {
+        result.requestId = e.id;
+        console.log('e.link:', e.link);
+        result.id = e.link.replace(/\/bibs\//, '').replace(/\/requests.+/, '');
+      }
+      return result;
+    });
+
     this.loading = true;
 
-    this.restService.call<any>(`/bibs?mms_id=${entities.map(e => e.id).join(',')}&view=brief`)
+    this.restService.call<any>(`/bibs?mms_id=${this.enrichedEntities.map(e => e.id).join(',')}&view=brief`)
       .pipe(
         map(result => {
           let items = {};
@@ -74,7 +85,7 @@ export class MainComponent implements OnInit, OnDestroy {
           return items;
         })
       ).subscribe(r => {
-        this.enrichedEntities = entities.map(e => Object.assign(e, r[e.id]));
+        this.enrichedEntities = this.enrichedEntities.map(e => Object.assign(e, r[e.id]));
         console.log("enrichedEntities:", this.enrichedEntities);
         let troveRequests = [];
         this.enrichedEntities.forEach(entity => {

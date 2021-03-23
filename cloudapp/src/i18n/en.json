@@ -9,7 +9,11 @@
             "Description": "An API key from Trove is required to use this app.",
             "ContactEmail": "Contact Email Address",
             "InstitutionalURL": "Institution URL",
-            "SavedSuccessfully": "Settings successfully saved."
+            "SavedSuccessfully": "Settings successfully saved.",
+            "Restore": "Restore",
+            "Reset": "Reset",
+            "Save": "Save",
+            "Back": "Back"
         },
         "UI": {
             "Back": "Back",
