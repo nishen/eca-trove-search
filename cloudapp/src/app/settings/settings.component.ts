@@ -13,6 +13,7 @@ import { TroveService } from '../trove.service';
 export class SettingsComponent implements OnInit, OnDestroy {
 
   settings: any = {};
+  saving = false;
 
   constructor(private settingsService: CloudAppSettingsService, private troveService: TroveService) { }
 
@@ -30,9 +31,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    this.settingsService.set(this.settings).subscribe(_ => {
-      console.debug("saving settings");
-      this.troveService.updateSettings(this.settings);
+    this.saving = true;
+    this.settingsService.set(this.settings).subscribe({
+      next: _ => {
+        console.debug("saving settings");
+        this.troveService.updateSettings(this.settings);
+      },
+      complete: () => this.saving = false
     });
   }
 }
