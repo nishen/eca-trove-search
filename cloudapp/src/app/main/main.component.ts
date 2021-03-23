@@ -86,7 +86,7 @@ export class MainComponent implements OnInit, OnDestroy {
         })
       ).subscribe(r => {
         this.enrichedEntities = this.enrichedEntities.map(e => Object.assign(e, r[e.id]));
-        console.log("enrichedEntities:", this.enrichedEntities);
+        console.debug("entities+alma:", this.enrichedEntities);
         let troveRequests = [];
         this.enrichedEntities.forEach(entity => {
           const identifier = this.extractIdentifier(entity)
@@ -105,7 +105,7 @@ export class MainComponent implements OnInit, OnDestroy {
               this.enrichedEntities[x].troveData = troveData[x];
               this.enrichedEntities[x].source = entities[x];
             }
-            console.debug("enrichedEntities:", this.enrichedEntities);
+            console.debug("entities+alma+trove:", this.enrichedEntities);
           });
       });
   }

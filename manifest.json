@@ -17,10 +17,11 @@
       "help": "https://github.com/nishen/eca-trove-search"
    },
    "icon": {
-      "type": "font",
-      "value": "acquisitions-incorporated"
+      "type": "url",
+      "value": "/assets/trove-logo.png"
    },
    "entities": [
-      "BIB_MMS"
+      "BIB_MMS",
+      "REQUEST"
    ]
 }

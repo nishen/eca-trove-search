@@ -30,8 +30,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    this.settingsService.set(this.settings).subscribe(response => {
-      console.log("saving settings:", response);
+    this.settingsService.set(this.settings).subscribe(_ => {
+      console.debug("saving settings");
       this.troveService.updateSettings(this.settings);
     });
   }
