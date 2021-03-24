@@ -4,8 +4,8 @@
             "Title": "Trove 搜索",
             "Description": "这个小程序用于在Trove中搜索屏幕上显示的BIB记录以获得更多信息.",
             "Results": "Trove 搜索结果",
-            "Translate.Main.Holdings": "馆藏",
-           "Translate.Main.Versions": "版本"
+            "Holdings": "馆藏",
+            "Versions": "版本"
         },
         "Settings": {
             "Title": "设置",
