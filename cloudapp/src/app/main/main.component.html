@@ -12,7 +12,7 @@
     <li>link out directly to the item on Trove.</li>
   </ul>
 
-  <mat-card *ngIf="!troveAvailable">
+  <mat-card *ngIf="troveAvailable !== null && !troveAvailable">
     <mat-card-title class="card-warning" translate>Translate.Errors.TroveUnavailable</mat-card-title>
     <mat-card-content>
       <p>There seems to be an issue attempting to search Trove.</p>

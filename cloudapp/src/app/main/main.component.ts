@@ -19,7 +19,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   enrichedEntities: any = null;
 
-  troveAvailable = false;
+  troveAvailable: boolean = null;
 
   constructor(
     private restService: CloudAppRestService,
@@ -40,6 +40,8 @@ export class MainComponent implements OnInit, OnDestroy {
     console.log("pageLoad", pageInfo);
 
     this.enrichedEntities = null;
+
+    if (pageInfo.entities.length == 0) return;
 
     this.troveService.isAvailable().subscribe(
       available => {
@@ -65,7 +67,6 @@ export class MainComponent implements OnInit, OnDestroy {
       let result: any = Object.assign({}, e);
       if (e.type == EntityType.REQUEST) {
         result.requestId = e.id;
-        console.log('e.link:', e.link);
         result.id = e.link.replace(/\/bibs\//, '').replace(/\/requests.+/, '');
       }
       return result;
