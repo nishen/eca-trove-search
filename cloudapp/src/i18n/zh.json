@@ -1,0 +1,39 @@
+{
+    "Translate": {
+        "Main": {
+            "Title": "Trove 搜索",
+            "Description": "这个小程序用于在Trove中搜索屏幕上显示的BIB记录以获得更多信息.",
+            "Results": "Trove 搜索结果",
+            "Translate.Main.Holdings": "馆藏",
+           "Translate.Main.Versions": "版本"
+        },
+        "Settings": {
+            "Title": "设置",
+            "Description": "本程序需要使用Trove提供的API key。 如果暂时没有的话您可以在Trove网站上建立一个个人账户，并根据提示信息获取一个API Key。",
+            "TroveLink": "Trove",
+            "TroveDocLink": "Trove API 文档",
+            "ContactEmail": "电子邮件",
+            "InstitutionalURL": "机构网址",
+            "SavedSuccessfully": "设置保存成功",
+            "Restore": "恢复",
+            "Reset": "重置",
+            "Save": "保存",
+            "Back": "返回",
+           "LanguageLabel": "选择语言",
+            "Settings": "设置"
+        },
+        "UI": {
+            "Back": "返回",
+            "Save": "保存",
+            "Update": "更新",
+            "Reset": "重置表格",
+            "Clear": "清除"
+        },
+        "Errors": {
+            "GenericError": "错误.",
+            "InvalidInstitutionURL": "机构网址必须以 http:// 或者 https:// 开头",
+            "TroveUnavailable": "Trove 网站目前无法访问",
+            "TroveUnavailableDescription": "<p>目前似乎无法正常访问Trove.</p> <p>这可能是因为:</p> <ol><li>您所使用的API Key不正确</li><li>Trove网站暂时无法访问</li></ol><p>请在这里设置或申请API key "
+        }
+    }
+}

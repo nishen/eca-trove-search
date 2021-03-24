@@ -42,13 +42,10 @@ export class MainComponent implements OnInit, OnDestroy {
     this.enrichedEntities = null;
 
     this.troveService.isAvailable().subscribe(
-      _ => {
-        this.troveAvailable = true;
+      available => {
+        this.troveAvailable = available;
+        console.log("trove available:", available);
         this.enrichEntities(pageInfo.entities);
-      },
-      err => {
-        this.troveAvailable = false;
-        console.log("we're down: ", err)
       });
   }
 
@@ -63,7 +60,6 @@ export class MainComponent implements OnInit, OnDestroy {
     });
 
     if (!valid) return;
-
 
     this.enrichedEntities = entities.map(e => {
       let result: any = Object.assign({}, e);

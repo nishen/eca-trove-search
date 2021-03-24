@@ -13,7 +13,7 @@
   </ul>
 
   <mat-card *ngIf="!troveAvailable">
-    <mat-card-title class="card-warning">Trove is Unavailable</mat-card-title>
+    <mat-card-title class="card-warning" translate>Translate.Errors.TroveUnavailable</mat-card-title>
     <mat-card-content>
       <p>There seems to be an issue attempting to search Trove.</p>
       <p>It is possible that:</p>
@@ -21,14 +21,14 @@
         <li>You have not set a correct API key for Trove.</li>
         <li>Trove is down for the moment.</li>
       </ol>
-      <p>You can set or check you API key in <strong><a [routerLink]="['settings']">settings</a></strong>.</p>
+      <p>You can set or check you API key in <strong><a [routerLink]="['settings']" translate>Translate.Settings.Settings</a></strong>.</p>
     </mat-card-content>
   </mat-card>
 
 </ng-template>
 
 <ng-template #entities>
-  <h1>Trove Results</h1>
+  <h1 translate>Translate.Main.Results</h1>
   <mat-accordion multi>
     <mat-expansion-panel *ngFor="let ee of enrichedEntities; let i = index"  [disabled]="ee.troveData?.length == 0">
       <mat-expansion-panel-header >
@@ -42,7 +42,7 @@
         <mat-card-header>
           <mat-card-title >{{ dp.title }}</mat-card-title>
           <mat-card-subtitle>{{ dp.type.join(", ") }}</mat-card-subtitle>
-          <mat-card-subtitle>Holdings ({{ dp.holdingsCount }}), Versions ({{ dp.versionCount }})</mat-card-subtitle>
+          <mat-card-subtitle translate>Translate.Main.Holdings ({{ dp.holdingsCount }}), Translate.Main.Versions ({{ dp.versionCount }})</mat-card-subtitle>
         </mat-card-header>
         <mat-divider></mat-divider>
           <mat-card-actions>

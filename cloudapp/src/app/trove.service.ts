@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CloudAppSettingsService } from '@exlibris/exl-cloudapp-angular-lib';
-import { Subscription, Observable, of, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { concatMap, map, catchError, delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -12,12 +12,12 @@ export class TroveService {
   baseUrl = 'https://api.trove.nla.gov.au/v2';
   apiKey = null;
 
-  public settingsSub: Subscription;
-
   constructor(private settingsService: CloudAppSettingsService, private http: HttpClient) {
     // get initial value. changes come through the settings subscription.
     this.settingsService.get().subscribe(settings => {
-      this.apiKey = settings.troveAPIKey;
+      console.log("initialised settings:", settings);
+      this.apiKey = settings.troveAPIKey == null || settings.troveAPIKey == "" ? null : settings.apiKey;
+      console.log("apikey:", this.apiKey);
     });
   }
 
@@ -27,15 +27,13 @@ export class TroveService {
   }
 
   isAvailable(): Observable<boolean> {
-    if (this.apiKey == null || this.apiKey == "")
-      return of(false);
-
     return this.http.get(`${this.baseUrl}/work/6255341?reclevel=brief&key=${this.apiKey}`)
       .pipe(
         catchError(err => {
-          return throwError("unable to extract data from Trove: " + err.message);
+          console.error("trove availability check error:", err);
+          return of(false);
         }),
-        map(_ => true));
+        map(res => res == false ? false : true));
   }
 
   searchTroveById(id: string) {
