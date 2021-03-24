@@ -4,8 +4,8 @@
             "Title": "Trove Search",
             "Description": "This app searches Trove for additional information for BIB results shown on the screen.",
             "Results": "Trove Results",
-            "Translate.Main.Holdings": "Holdings",
-            "Translate.Main.Versions": "Versions"
+            "Holdings": "Holdings",
+            "Versions": "Versions"
         },
         "Settings": {
             "Title": "Settings",
