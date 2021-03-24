@@ -1,19 +1,26 @@
-{ 
+{
     "Translate": {
         "Main": {
             "Title": "Trove Search",
-            "Description": "This app searches Trove for additional information for BIB results shown on the screen."
+            "Description": "This app searches Trove for additional information for BIB results shown on the screen.",
+            "Results": "Trove Results",
+            "Translate.Main.Holdings": "Holdings",
+            "Translate.Main.Versions": "Versions"
         },
         "Settings": {
             "Title": "Settings",
-            "Description": "An API key from Trove is required to use this app.",
+            "Description": "This app requires an API key from Trove to function. If you don't have one, create an account at Trove and follow the instructions to get an API key.",
+            "TroveLink": "Trove",
+            "TroveDocLink": "Trove API Documentation",
             "ContactEmail": "Contact Email Address",
             "InstitutionalURL": "Institution URL",
             "SavedSuccessfully": "Settings successfully saved.",
             "Restore": "Restore",
             "Reset": "Reset",
             "Save": "Save",
-            "Back": "Back"
+            "Back": "Back",
+            "LanguageLabel": "Select Your Language",
+            "Settings": "Settings"
         },
         "UI": {
             "Back": "Back",
@@ -24,7 +31,9 @@
         },
         "Errors": {
             "GenericError": "An error occurred.",
-            "InvalidInstitutionURL": "Institution URL must begin with http:// or https://."
+            "InvalidInstitutionURL": "Institution URL must begin with http:// or https://.",
+            "TroveUnavailable": "Trove is Unavailable",
+            "TroveUnavailableDescription": "<p>There seems to be an issue attempting to search Trove.</p> <p>It is possible that:</p> <ol><li>You have not set a correct API key for Trove.</li><li>Trove is down for the moment.</li></ol><p>You can set or check you API key in "
         }
     }
 }
