@@ -42,7 +42,8 @@
         <mat-card-header>
           <mat-card-title >{{ dp.title }}</mat-card-title>
           <mat-card-subtitle>{{ dp.type.join(", ") }}</mat-card-subtitle>
-          <mat-card-subtitle translate>Translate.Main.Holdings ({{ dp.holdingsCount }}), Translate.Main.Versions ({{ dp.versionCount }})</mat-card-subtitle>
+          <mat-card-subtitle>
+            <span translate>Translate.Main.Holdings</span> ({{ dp.holdingsCount }}), <span translate>Translate.Main.Versions</span> ({{ dp.versionCount }})</mat-card-subtitle>
         </mat-card-header>
         <mat-divider></mat-divider>
           <mat-card-actions>
