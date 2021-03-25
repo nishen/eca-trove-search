@@ -1,8 +1,12 @@
-import { forkJoin, Subscription, of } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { Subscription, of } from 'rxjs';
+import { finalize, map, mergeMap, tap } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
-  CloudAppRestService, CloudAppEventsService, AlertService, PageInfo, EntityType, Entity
+  CloudAppRestService,
+  CloudAppEventsService,
+  PageInfo,
+  EntityType,
+  Entity
 } from '@exlibris/exl-cloudapp-angular-lib';
 import { TroveService } from '../trove.service';
 
@@ -24,7 +28,6 @@ export class MainComponent implements OnInit, OnDestroy {
   constructor(
     private restService: CloudAppRestService,
     private eventsService: CloudAppEventsService,
-    private alert: AlertService,
     private troveService: TroveService
   ) { }
 
@@ -36,85 +39,85 @@ export class MainComponent implements OnInit, OnDestroy {
     this.pageLoad$.unsubscribe();
   }
 
-  onPageLoad = (pageInfo: PageInfo) => {
+  onPageLoad = async (pageInfo: PageInfo) => {
     console.log("pageLoad", pageInfo);
 
     this.enrichedEntities = null;
 
     if (pageInfo.entities.length == 0) return;
 
-    this.troveService.isAvailable().subscribe(
-      available => {
-        this.troveAvailable = available;
-        console.log("trove available:", available);
-        this.enrichEntities(pageInfo.entities);
-      });
+    this.troveAvailable = await this.troveService.isAvailable();
+    if (this.troveAvailable) this.enrichEntities(pageInfo.entities);
   }
 
-  enrichEntities(entities: Entity[]) {
-    if (entities.length == 0) return;
+  enrichEntities = (entities: Entity[]) => {
+    if (entities.length == 0 || !this.troveAvailable || !this.validEntities(entities)) return;
 
-    if (!this.troveAvailable) return;
+    this.loading = true;
+    of(entities).pipe(
+      map(this.enrichBase),
+      map(this.enrichWithBibs),
+      mergeMap(e => e),
+      map(this.enrichWithTroveData),
+      mergeMap(e => e),
+      tap(e => console.debug("entities+alma+trove:", e)),
+      finalize(() => this.loading = false)
+    ).subscribe(e => this.enrichedEntities = e);
+  }
 
-    let valid = true;
-    entities.forEach(e => {
-      if ((e.type !== EntityType.BIB_MMS) && (e.type !== EntityType.REQUEST)) valid = false;
-    });
-
-    if (!valid) return;
-
-    this.enrichedEntities = entities.map(e => {
+  enrichBase = (entities: Entity[]) => {
+    return entities.map(e => {
       let result: any = Object.assign({}, e);
+      result.source = e;
       if (e.type == EntityType.REQUEST) {
         result.requestId = e.id;
         result.id = e.link.replace(/\/bibs\//, '').replace(/\/requests.+/, '');
       }
       return result;
     });
+  }
 
-    this.loading = true;
-
-    this.restService.call<any>(`/bibs?mms_id=${this.enrichedEntities.map(e => e.id).join(',')}&view=brief`)
+  enrichWithBibs = (entities: any[]) => {
+    return this.restService.call(`/bibs?mms_id=${entities.map(e => e.id).join(',')}&view=brief`)
       .pipe(
         map(result => {
           let items = {};
           result.bib.forEach(x => Object.assign(items, { [x["mms_id"]]: x }))
           return items;
+        }),
+        map(result => {
+          entities.forEach(x => Object.assign(x, result[x.id]))
+          return entities;
         })
-      ).subscribe(r => {
-        this.enrichedEntities = this.enrichedEntities.map(e => Object.assign(e, r[e.id]));
-        console.debug("entities+alma:", this.enrichedEntities);
-        let troveRequests = [];
-        this.enrichedEntities.forEach(entity => {
-          const identifier = this.extractIdentifier(entity)
-          if (identifier !== null)
-            troveRequests.push(this.troveService.searchTroveById(identifier));
-          else
-            troveRequests.push(of(null));
-        });
-
-        forkJoin(troveRequests)
-          .pipe(
-            finalize(() => this.loading = false)
-          ).subscribe(t => {
-            const troveData = t.map(td => this.troveService.createDisplayPackage(td));
-            for (let x = 0; x < this.enrichedEntities.length; x++) {
-              this.enrichedEntities[x].troveData = troveData[x];
-              this.enrichedEntities[x].source = entities[x];
-            }
-            console.debug("entities+alma+trove:", this.enrichedEntities);
-          });
-      });
+      );
   }
 
-  extractIdentifier(entity: any) {
+  enrichWithTroveData = async (entities: any[]) => {
+    let requests = entities
+      .map(e => {
+        const identifier = this.extractIdentifier(e);
+        return (identifier?.length > 0) ? this.troveService.searchTroveById(identifier).toPromise() : null
+      });
+
+    const responses = await Promise.all(requests);
+    for (let x = 0; x < entities.length; x++) {
+      entities[x].troveData = this.troveService.createDisplayPackage(responses[x]);
+    }
+
+    return entities;
+  }
+
+  validEntities = (entities: Entity[]) => {
+    return entities.every(e => [EntityType.BIB_MMS, EntityType.REQUEST].includes(e.type));
+  }
+
+  //TODO: rework this with regex.
+  extractIdentifier = (entity: any) => {
     if (entity == null) return null;
-
-    let identifier: string = null;
-
-    if (entity.issn != null) identifier = entity.issn;
-    else if (entity.isbn != null) identifier = entity.isbn;
-
-    return (identifier == null) ? identifier : identifier.replace(/-/g, '').replace(/[^0-9].+/, '');
+    let identifier: string = entity.issn ?? entity.isbn;
+    if (identifier == null || identifier.trim() == "") return null;
+    identifier = identifier.replace(/-/g, '').replace(/[^0-9].+/, '');
+    if (identifier == "") return null;
+    return [identifier];
   }
 }

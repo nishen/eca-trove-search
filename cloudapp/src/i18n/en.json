@@ -5,13 +5,16 @@
             "Description": "This app searches Trove for additional information for BIB results shown on the screen.",
             "Results": "Trove Results",
             "Holdings": "Holdings",
-            "Versions": "Versions"
+            "Versions": "Versions",
+            "TroveOpenButton": "Open in Trove"
         },
         "Settings": {
             "Title": "Settings",
             "Description": "This app requires an API key from Trove to function. If you don't have one, create an account at Trove and follow the instructions to get an API key.",
             "TroveLink": "Trove",
             "TroveDocLink": "Trove API Documentation",
+            "TroveAPIKey": "Add your Trove API Key",
+            "TroveAPIKeyPlaceholder": "Trove API Key",
             "ContactEmail": "Contact Email Address",
             "InstitutionalURL": "Institution URL",
             "SavedSuccessfully": "Settings successfully saved.",
@@ -20,6 +23,7 @@
             "Save": "Save",
             "Back": "Back",
             "LanguageLabel": "Select Your Language",
+            "LanguagePlaceholder": "Language",
             "Settings": "Settings"
         },
         "UI": {

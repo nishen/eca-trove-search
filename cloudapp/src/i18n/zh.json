@@ -5,13 +5,16 @@
             "Description": "这个小程序用于在Trove中搜索屏幕上显示的BIB记录以获得更多信息.",
             "Results": "Trove 搜索结果",
             "Holdings": "馆藏",
-            "Versions": "版本"
+            "Versions": "版本",
+            "TroveOpenButton": "在Trove中打开"
         },
         "Settings": {
             "Title": "设置",
             "Description": "本程序需要使用Trove提供的API key。 如果暂时没有的话您可以在Trove网站上建立一个个人账户，并根据提示信息获取一个API Key。",
             "TroveLink": "Trove",
             "TroveDocLink": "Trove API 文档",
+            "TroveAPIKey": "添加您的Trove API密钥",
+            "TroveAPIKeyPlaceholder": "Trove API密钥",
             "ContactEmail": "电子邮件",
             "InstitutionalURL": "机构网址",
             "SavedSuccessfully": "设置保存成功",
@@ -19,7 +22,8 @@
             "Reset": "重置",
             "Save": "保存",
             "Back": "返回",
-           "LanguageLabel": "选择语言",
+            "LanguageLabel": "选择语言",
+            "LanguagePlaceholder": "语言",
             "Settings": "设置"
         },
         "UI": {
