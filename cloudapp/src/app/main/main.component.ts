@@ -95,8 +95,8 @@ export class MainComponent implements OnInit, OnDestroy {
   enrichWithTroveData = async (entities: any[]) => {
     let requests = entities
       .map(e => {
-        const identifier = this.extractIdentifier(e);
-        return (identifier?.length > 0) ? this.troveService.searchTroveById(identifier).toPromise() : null
+        const identifiers = this.extractIdentifier(e);
+        return (identifiers?.length > 0) ? this.troveService.searchTroveById(identifiers).toPromise() : null
       });
 
     const responses = await Promise.all(requests);
@@ -111,13 +111,11 @@ export class MainComponent implements OnInit, OnDestroy {
     return entities.every(e => [EntityType.BIB_MMS, EntityType.REQUEST].includes(e.type));
   }
 
-  //TODO: rework this with regex.
   extractIdentifier = (entity: any) => {
-    if (entity == null) return null;
-    let identifier: string = entity.issn ?? entity.isbn;
-    if (identifier == null || identifier.trim() == "") return null;
-    identifier = identifier.replace(/-/g, '').replace(/[^0-9].+/, '');
-    if (identifier == "") return null;
-    return [identifier];
+    if (entity == null) return [];
+    const identifier: string = entity.issn ?? entity.isbn;
+    if (identifier == null || identifier.trim() == "") return [];
+    console.log("identifiers", identifier);
+    return identifier.replace(/[^0-9 X]/g, '').match(/([X\d]{13}|[X|\d]{10}|[X|\d]{8})/g);
   }
 }
