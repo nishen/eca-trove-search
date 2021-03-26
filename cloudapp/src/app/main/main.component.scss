@@ -88,14 +88,24 @@ div.mat-expansion-panel-body {
 .mat-card-content {
   font-size: 13px !important;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
-.mat-stroked-button {
+.mat-button {
   min-width: 56px;
-  line-height: 32px;
-  padding: 0 8px;
-  font-size: 11px;
+  line-height: 24px;
+  padding: 0 3px;
+  font-size: 10px;
   text-transform: uppercase;
+}
+
+mat-card-actions {
+  padding: 5px;
+  justify-content: space-between;
+}
+
+mat-card-actions a {
+  font-size: 14px;
+  font-family: Calibri, Tahoma, Arial, Helvetica, sans-serif;
 }

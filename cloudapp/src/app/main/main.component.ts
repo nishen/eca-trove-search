@@ -115,7 +115,6 @@ export class MainComponent implements OnInit, OnDestroy {
     if (entity == null) return [];
     const identifier: string = entity.issn ?? entity.isbn;
     if (identifier == null || identifier.trim() == "") return [];
-    console.log("identifiers", identifier);
     return identifier.replace(/[^0-9 X]/g, '').match(/([X\d]{13}|[X|\d]{10}|[X|\d]{8})/g);
   }
 }

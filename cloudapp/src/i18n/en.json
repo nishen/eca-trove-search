@@ -6,7 +6,10 @@
             "Results": "Trove Results",
             "Holdings": "Holdings",
             "Versions": "Versions",
-            "TroveOpenButton": "Open in Trove"
+            "TroveOpenButton": "Trove",
+            "LibAUHoldings": "Holdings (LA)",
+            "LibAUMarc": "MARC (LA)",
+            "OCLC": "OCLC"
         },
         "Settings": {
             "Title": "Settings",

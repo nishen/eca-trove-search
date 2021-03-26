@@ -6,7 +6,10 @@
             "Results": "Trove 搜索结果",
             "Holdings": "馆藏",
             "Versions": "版本",
-            "TroveOpenButton": "在Trove中打开"
+            "TroveOpenButton": "Trove",
+            "LibAUHoldings": "控股公司 (LA)",
+            "LibAUMarc": "MARC (LA)",
+            "OCLC": "OCLC"
         },
         "Settings": {
             "Title": "设置",

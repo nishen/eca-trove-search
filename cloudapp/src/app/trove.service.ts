@@ -44,7 +44,7 @@ export class TroveService {
   }
 
   searchTroveById(id: string[]) {
-    return this.http.get(`${this.baseUrl}/result?key=${this.apiKey}&zone=all&q=identifier:(${id.join(" OR ")})`);
+    return this.http.get(`${this.baseUrl}/result?key=${this.apiKey}&zone=all&include=workversions&q=identifier:(${id.join(" OR ")})`);
   }
 
   getWorkItem(id: string) {
@@ -58,10 +58,30 @@ export class TroveService {
     let result = [];
 
     let foundIds = [];
-    troveResult.response.zone.forEach(z => {
-      if (z.records.total > 0) {
+    troveResult.response.zone?.filter(z => z.name != "people")?.forEach(z => {
+      if (z.records?.total > 0) {
         z.records.work?.forEach(w => {
           if (!foundIds.includes(w.id)) {
+            let externalIds = {};
+            w.version?.forEach(v => {
+              if (!Array.isArray(v.record)) v.record = [v.record];
+              v.record?.forEach(r => {
+                r.identifier?.forEach(i => {
+                  if (i.type == "control number") {
+                    if (!externalIds[i.source]) externalIds[i.source] = new Set();
+                    externalIds[i.source].add(i.value);
+                    if (i.source == "AuCNLKIN" && !w.librariesAustraliaUrlHoldings) {
+                      w.librariesAustraliaUrlHoldings = `https://librariesaustralia.nla.gov.au/search/full?dbid=nbd&resultsPage=results&sdbid=nbd&rs=942561&view=label&cq=AN:${i.value}`;
+                      w.librariesAustraliaUrlMarc = `https://librariesaustralia.nla.gov.au/search/full?dbid=nbd&resultsPage=results&sdbid=nbd&rs=942561&view=marc&cq=AN:${i.value}`;
+                    } else if (i.source == "OCoLC" && !w.oclcUrl) {
+                      w.oclcUrl = `https://www.worldcat.org/title/gazing-at-the-stars-memories-of-a-child-survivor/oclc/${i.value}`;
+                    }
+                  }
+                });
+              });
+            });
+
+            w.externalIds = externalIds;
             result.push(w);
             foundIds.push(w.id);
           }
