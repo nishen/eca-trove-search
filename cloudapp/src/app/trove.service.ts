@@ -60,8 +60,8 @@ export class TroveService {
     let foundIds = [];
     return of(jp.query(troveResult, "$..work")).pipe(
       // unpack 2 layers
-      mergeMap(i => i),
-      mergeMap(i => i),
+      mergeMap((i : any[]) => i),
+      mergeMap((i : any[]) => i),
       // filter duplicate records
       filter(i => !foundIds.includes(i["id"])),
       // track duplicate records
