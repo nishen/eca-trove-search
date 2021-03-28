@@ -101,7 +101,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
     const responses = await Promise.all(requests);
     for (let x = 0; x < entities.length; x++) {
-      entities[x].troveData = this.troveService.createDisplayPackage(responses[x]);
+      entities[x].troveData = await this.troveService.createDisplayPackage(responses[x]);
     }
 
     return entities;

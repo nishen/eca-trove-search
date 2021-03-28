@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CloudAppSettingsService } from '@exlibris/exl-cloudapp-angular-lib';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { filter, map, mergeMap, tap, catchError, toArray } from 'rxjs/operators';
+import jp from 'jsonpath';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,8 @@ import { map, catchError } from 'rxjs/operators';
 export class TroveService {
 
   baseUrl = 'https://api.trove.nla.gov.au/v2';
+  baseUrlLibAU = 'https://librariesaustralia.nla.gov.au/search/full';
+  baseUrlOCLC = 'https://www.worldcat.org/oclc';
   apiKey = null;
 
   constructor(private settingsService: CloudAppSettingsService, private http: HttpClient) {
@@ -51,44 +54,47 @@ export class TroveService {
     return this.http.get(`${this.baseUrl}/work/${id}?key=${this.apiKey}&reclevel=brief`);
   }
 
-  createDisplayPackage(troveResult: any) {
-    if (troveResult === null)
-      return [];
-
-    let result = [];
+  createDisplayPackage = (troveResult: any) => {
+    if (troveResult == null) return [];
 
     let foundIds = [];
-    troveResult.response.zone?.filter(z => z.name != "people")?.forEach(z => {
-      if (z.records?.total > 0) {
-        z.records.work?.forEach(w => {
-          if (!foundIds.includes(w.id)) {
-            let externalIds = {};
-            w.version?.forEach(v => {
-              if (!Array.isArray(v.record)) v.record = [v.record];
-              v.record?.forEach(r => {
-                r.identifier?.forEach(i => {
-                  if (i.type == "control number") {
-                    if (!externalIds[i.source]) externalIds[i.source] = new Set();
-                    externalIds[i.source].add(i.value);
-                    if (i.source == "AuCNLKIN" && !w.librariesAustraliaUrlHoldings) {
-                      w.librariesAustraliaUrlHoldings = `https://librariesaustralia.nla.gov.au/search/full?dbid=nbd&resultsPage=results&sdbid=nbd&rs=942561&view=label&cq=AN:${i.value}`;
-                      w.librariesAustraliaUrlMarc = `https://librariesaustralia.nla.gov.au/search/full?dbid=nbd&resultsPage=results&sdbid=nbd&rs=942561&view=marc&cq=AN:${i.value}`;
-                    } else if (i.source == "OCoLC" && !w.oclcUrl) {
-                      w.oclcUrl = `https://www.worldcat.org/title/gazing-at-the-stars-memories-of-a-child-survivor/oclc/${i.value}`;
-                    }
-                  }
-                });
-              });
-            });
-
-            w.externalIds = externalIds;
-            result.push(w);
-            foundIds.push(w.id);
-          }
+    return of(jp.query(troveResult, "$..work")).pipe(
+      // unpack 2 layers
+      mergeMap(i => i),
+      mergeMap(i => i),
+      // filter duplicate records
+      filter(i => !foundIds.includes(i["id"])),
+      // track duplicate records
+      map(i => {
+        foundIds.push(i["id"]);
+        return i;
+      }),
+      // make record structure consistent - sometimes object, sometimes array, so enforce array
+      map(i => {
+        jp.apply(i, "$.version[*]", e => {
+          e["record"] = Array.isArray(e.record) ? e["record"] : [e.record];
+          return e;
         });
-      }
-    });
+        return i;
+      }),
+      // add urls and identifiers to package
+      map(i => {
+        i["externalIds"] = jp.query(i, "$.version[*].record[*].identifier[?(@.type == 'control number' && @.source)]");
 
-    return result;
+        const idsOclc = jp.query(i, "$.version[*].record[*].identifier[?(@.type == 'control number' && @.source == 'OCoLC')]");
+        if (idsOclc.length > 0)
+          i["oclcUrl"] = `${this.baseUrlOCLC}/${idsOclc[0].value}`;
+
+        const idsLibAU = jp.query(i, "$.version[*].record[*].identifier[?(@.type == 'control number' && @.source == 'AuCNLKIN')]")
+        if (idsLibAU.length > 0) {
+          i["libAuHoldings"] = `${this.baseUrlLibAU}?dbid=nbd&resultsPage=results&sdbid=nbd&view=label&cq=AN:${idsLibAU[0].value}`;
+          i["libAuMARC"] = `${this.baseUrlLibAU}?dbid=nbd&resultsPage=results&sdbid=nbd&view=marc&cq=AN:${idsLibAU[0].value}`;
+        }
+
+        return i;
+      }),
+      // collect records into an array
+      toArray()
+    ).toPromise();
   }
 }
