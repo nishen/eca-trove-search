@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CloudAppSettingsService } from '@exlibris/exl-cloudapp-angular-lib';
 import { of } from 'rxjs';
-import { filter, map, mergeMap, tap, catchError, toArray } from 'rxjs/operators';
+import { filter, map, mergeMap, catchError, toArray } from 'rxjs/operators';
 import jp from 'jsonpath';
 
 @Injectable({
@@ -18,14 +18,13 @@ export class TroveService {
   constructor(private settingsService: CloudAppSettingsService, private http: HttpClient) {
     // get initial value. changes come through the settings subscription.
     this.settingsService.get().subscribe(settings => {
-      console.log("initialised settings:", settings);
+      console.debug("initialised settings...");
       this.apiKey = settings.troveAPIKey == null || settings.troveAPIKey == "" ? null : settings.apiKey;
-      console.log("apikey:", this.apiKey);
     });
   }
 
   updateSettings(settings: any) {
-    console.log("updated settings:", settings);
+    console.debug("updated settings...");
     this.apiKey = settings.troveAPIKey;
   }
 
@@ -55,7 +54,6 @@ export class TroveService {
   }
 
   createDisplayPackage = (troveResult: any) => {
-    console.log(troveResult);
     if (troveResult == null) return [];
 
     let foundIds = [];
@@ -63,7 +61,6 @@ export class TroveService {
       // unpack 2 layers
       mergeMap((i : any[]) => i),
       mergeMap((i : any[]) => i),
-      tap(console.log),
       // filter duplicate records
       filter(i => !foundIds.includes(i["id"])),
       // track duplicate records
