@@ -10,11 +10,9 @@
     "typescript.tsdk": "node_modules/typescript/lib",
     "json.schemas": [
         {
-            "fileMatch": [
-                "/manifest.json"
-            ],
+            "fileMatch": ["/manifest.json"],
             "url": "/node_modules/@exlibris/exl-cloudapp-base/manifest.schema.json"
         }
-    ]
-    
+    ],
+    "angular.enable-strict-mode-prompt": false
 }
