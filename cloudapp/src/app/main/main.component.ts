@@ -9,7 +9,6 @@ import {
     Entity
 } from "@exlibris/exl-cloudapp-angular-lib";
 import { TroveService } from "../trove.service";
-import { connectableObservableDescriptor } from "rxjs/internal/observable/ConnectableObservable";
 
 @Component({
     selector: "app-main",

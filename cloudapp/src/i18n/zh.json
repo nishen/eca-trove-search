@@ -9,7 +9,9 @@
             "TroveOpenButton": "Trove",
             "LibAUHoldings": "控股公司 (LA)",
             "LibAUMarc": "MARC (LA)",
-            "OCLC": "OCLC"
+            "OCLC": "OCLC",
+            "CulturallySensitive": "文化敏感",
+            "FirstAustralians": "第一批澳洲人"
         },
         "Settings": {
             "Title": "设置",

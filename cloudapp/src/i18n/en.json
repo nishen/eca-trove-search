@@ -9,7 +9,9 @@
             "TroveOpenButton": "Trove",
             "LibAUHoldings": "Holdings (LA)",
             "LibAUMarc": "MARC (LA)",
-            "OCLC": "OCLC"
+            "OCLC": "OCLC",
+            "CulturallySensitive": "Culturally Sensitive",
+            "FirstAustralians": "First Australians"
         },
         "Settings": {
             "Title": "Settings",

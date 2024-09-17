@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { CloudAppSettingsService } from "@exlibris/exl-cloudapp-angular-lib";
 import { of } from "rxjs";
-import { filter, map, mergeMap, catchError, toArray } from "rxjs/operators";
+import { filter, map, tap, mergeMap, catchError, toArray } from "rxjs/operators";
 import jp from "jsonpath";
 
 @Injectable({
@@ -63,18 +63,21 @@ export class TroveService {
         if (troveResult == null) return [];
 
         let foundIds = [];
-        return of(jp.query(troveResult, "$.response.zone[?(@.name != 'people')]..work"))
+        return of(jp.query(troveResult, "$.category[?(@.code != 'people')]..work"))
             .pipe(
+                tap((i) => console.log("##:", i)),
                 // unpack 2 layers
                 mergeMap((i: any[]) => i),
                 mergeMap((i: any[]) => i),
                 // filter duplicate records
                 filter((i) => !foundIds.includes(i["id"])),
                 // track duplicate records
+                tap((i) => console.log("#0:", i)),
                 map((i) => {
                     foundIds.push(i["id"]);
                     return i;
                 }),
+                tap((i) => console.log("#1:", foundIds)),
                 // make record structure consistent - sometimes object, sometimes array, so enforce array
                 map((i) => {
                     jp.apply(i, "$.version[*]", (e) => {
@@ -83,22 +86,23 @@ export class TroveService {
                     });
                     return i;
                 }),
+                tap((i) => console.log("#2:", i)),
                 // add urls and identifiers to package
                 map((i) => {
                     i["externalIds"] = jp.query(
                         i,
-                        "$.version[*].record[*].identifier[?(@.type == 'control number' && @.source)]"
+                        "$.version[*].record[*].metadata.dc.identifier[?(@.type == 'control number' && @.source)]"
                     );
 
                     const idsOclc = jp.query(
                         i,
-                        "$.version[*].record[*].identifier[?(@.type == 'control number' && @.source == 'OCoLC')]"
+                        "$.version[*].record[*].metadata.dc.identifier[?(@.type == 'control number' && @.source == 'OCoLC')]"
                     );
                     if (idsOclc.length > 0) i["oclcUrl"] = `${this.baseUrlOCLC}/${idsOclc[0].value}`;
 
                     const idsLibAU = jp.query(
                         i,
-                        "$.version[*].record[*].identifier[?(@.type == 'control number' && @.source == 'AuCNLKIN')]"
+                        "$.version[*].record[*].metadata.dc.identifier[?(@.type == 'control number' && @.source == 'AuCNLKIN')]"
                     );
                     if (idsLibAU.length > 0) {
                         i[
@@ -111,6 +115,7 @@ export class TroveService {
 
                     return i;
                 }),
+                tap((i) => console.log("#3:", i)),
                 // collect records into an array
                 toArray()
             )

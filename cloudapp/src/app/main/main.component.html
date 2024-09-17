@@ -1,76 +1,83 @@
 <ng-container *ngIf="enrichedEntities?.length > 0 && troveAvailable; then entities; else noentities"></ng-container>
 
 <ng-template #noentities>
-  <h1>Welcome!</h1>
-  <p>This app searches Trove for additional information for BIB results shown on the screen.</p>
-  <p>You are able to:</p>
-  <ul>
-    <li>view holdings numbers.</li>
-    <li>view type information about a particular Trove item.</li>
-    <li>link out directly to the item on Trove.</li>
-    <li>link out directly to the item on WorldCat.</li>
-    <li>link out directly to the item holdings on Libraries Australia.</li>
-    <li>link out directly to the item MARC record on Libraries Australia.</li>
-  </ul>
+    <h1>Welcome!</h1>
+    <p>This app searches Trove for additional information for BIB results shown on the screen.</p>
+    <p>You are able to:</p>
+    <ul>
+        <li>view holdings numbers.</li>
+        <li>view type information about a particular Trove item.</li>
+        <li>link out directly to the item on Trove.</li>
+        <li>link out directly to the item on WorldCat.</li>
+        <li>link out directly to the item holdings on Libraries Australia.</li>
+        <li>link out directly to the item MARC record on Libraries Australia.</li>
+    </ul>
 
-  <mat-card *ngIf="troveAvailable !== null && !troveAvailable">
-    <mat-card-title class="card-warning" translate>Translate.Errors.TroveUnavailable</mat-card-title>
-    <mat-card-content>
-      <p>There seems to be an issue attempting to search Trove.</p>
-      <p>It is possible that:</p>
-      <ol>
-        <li>You have not set a correct API key for Trove.</li>
-        <li>Trove is down for the moment.</li>
-      </ol>
-      <p>
-        You can set or check you API key in
-        <strong><a [routerLink]="['settings']" translate>Translate.Settings.Settings</a></strong
-        >.
-      </p>
-    </mat-card-content>
-  </mat-card>
+    <mat-card *ngIf="troveAvailable !== null && !troveAvailable">
+        <mat-card-title class="card-warning" translate>Translate.Errors.TroveUnavailable</mat-card-title>
+        <mat-card-content>
+            <p>There seems to be an issue attempting to search Trove.</p>
+            <p>It is possible that:</p>
+            <ol>
+                <li>You have not set a correct API key for Trove.</li>
+                <li>Trove is down for the moment.</li>
+            </ol>
+            <p>
+                You can set or check you API key in
+                <strong><a [routerLink]="['settings']" translate>Translate.Settings.Settings</a></strong
+                >.
+            </p>
+        </mat-card-content>
+    </mat-card>
 </ng-template>
 
 <ng-template #entities>
-  <h1 translate>Translate.Main.Results</h1>
-  <mat-accordion multi>
-    <mat-expansion-panel *ngFor="let ee of enrichedEntities; let i = index" [disabled]="ee.troveData?.length == 0">
-      <mat-expansion-panel-header>
-        <mat-panel-title>{{ i + 1 }}.</mat-panel-title>
-        <mat-panel-description>
-          <span class="truncate">[{{ ee.troveData?.length }}] {{ ee.description }}</span>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
+    <h1 translate>Translate.Main.Results</h1>
+    <mat-accordion multi>
+        <mat-expansion-panel *ngFor="let ee of enrichedEntities; let i = index" [disabled]="ee.troveData?.length == 0">
+            <mat-expansion-panel-header>
+                <mat-panel-title>{{ i + 1 }}.</mat-panel-title>
+                <mat-panel-description>
+                    <span class="truncate">[{{ ee.troveData?.length }}] {{ ee.description }}</span>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
 
-      <mat-card *ngFor="let dp of ee.troveData; let i = index">
-        <mat-card-header>
-          <mat-card-title>{{ dp.title }}</mat-card-title>
-          <mat-card-subtitle>{{ dp.type.join(", ") }}</mat-card-subtitle>
-          <mat-card-subtitle>
-            <span translate>Translate.Main.Holdings</span> ({{ dp.holdingsCount }}),
-            <span translate>Translate.Main.Versions</span> ({{ dp.versionCount }})</mat-card-subtitle
-          >
-        </mat-card-header>
-        <mat-divider></mat-divider>
-        <mat-card-actions>
-          <a *ngIf="dp.troveUrl" color="primary" target="_blank" href="{{ dp.troveUrl }}"
-            ><span translate>Translate.Main.TroveOpenButton</span></a
-          >
-          <a *ngIf="dp.libAuHoldings" color="primary" target="_blank" href="{{ dp.libAuHoldings }} "
-            ><span translate>Translate.Main.LibAUHoldings</span></a
-          >
-          <a *ngIf="dp.libAuMARC" color="primary" target="_blank" href="{{ dp.libAuMARC }} "
-            ><span translate>Translate.Main.LibAUMarc</span></a
-          >
-          <a *ngIf="dp.oclcUrl" color="primary" target="_blank" href="{{ dp.oclcUrl }} "
-            ><span translate>Translate.Main.OCLC</span></a
-          >
-        </mat-card-actions>
-      </mat-card>
-    </mat-expansion-panel>
-  </mat-accordion>
+            <mat-card *ngFor="let dp of ee.troveData; let i = index">
+                <mat-card-header>
+                    <mat-card-title>{{ dp.title }}</mat-card-title>
+                    <mat-card-subtitle>{{ dp.type.join(", ") }}</mat-card-subtitle>
+                    <mat-card-subtitle>
+                        <span translate>Translate.Main.Holdings</span> ({{ dp.holdingsCount }}),
+                        <span translate>Translate.Main.Versions</span> ({{ dp.versionCount }})</mat-card-subtitle
+                    >
+                    <mat-card-subtitle *ngIf="dp.culturallySensitive; or: dp.firstAustralians" class="highlight">
+                        <span *ngIf="dp.culturallySensitive" translate>Translate.Main.CulturallySensitive</span>
+                        <span *ngIf="dp.culturallySensitive; and: dp.firstAustralians"> | </span>
+                        <span *ngIf="dp.firstAustralians" translate
+                            >Translate.Main.FirstAustralians</span
+                        ></mat-card-subtitle
+                    >
+                </mat-card-header>
+                <mat-divider></mat-divider>
+                <mat-card-actions>
+                    <a *ngIf="dp.troveUrl" color="primary" target="_blank" href="{{ dp.troveUrl }}"
+                        ><span translate>Translate.Main.TroveOpenButton</span></a
+                    >
+                    <a *ngIf="dp.libAuHoldings" color="primary" target="_blank" href="{{ dp.libAuHoldings }} "
+                        ><span translate>Translate.Main.LibAUHoldings</span></a
+                    >
+                    <a *ngIf="dp.libAuMARC" color="primary" target="_blank" href="{{ dp.libAuMARC }} "
+                        ><span translate>Translate.Main.LibAUMarc</span></a
+                    >
+                    <a *ngIf="dp.oclcUrl" color="primary" target="_blank" href="{{ dp.oclcUrl }} "
+                        ><span translate>Translate.Main.OCLC</span></a
+                    >
+                </mat-card-actions>
+            </mat-card>
+        </mat-expansion-panel>
+    </mat-accordion>
 </ng-template>
 
 <div class="loading-shade" *ngIf="loading">
-  <mat-spinner diameter="50"></mat-spinner>
+    <mat-spinner diameter="50"></mat-spinner>
 </div>
